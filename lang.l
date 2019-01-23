@@ -9,6 +9,7 @@
 
 #include "lex.h"
 #include "tokens.h"
+#include "cSymbolTable.h"
 
 // Macros that can be used to create debug output from the scanner
 // The first one does NOT create debug output, the second does.
@@ -47,8 +48,14 @@ period          ['.']
 "endif"			    DO_RETURN(ENDIF);
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
-"{"                         DO_RETURN('{');
-"}"                         DO_RETURN('}');
+"{"                         {
+				g_symbolTable.IncreaseScope();
+				return yytext[0];
+			    };
+"}"                         {
+				g_symbolTable.DecreaseScope();
+				return yytext[0];
+			    };
 "["                         DO_RETURN('[');
 "]"                         DO_RETURN(']');
 ";"                         DO_RETURN(';');
@@ -64,12 +71,17 @@ period          ['.']
 "&&"                        DO_RETURN(AND);
 "||"                        DO_RETURN(OR);
 " "                         {};
-"	"                   {};
+"\t"                        {};
 "\n"                        {};
-[0-9]*[.][0-9]+               DO_RETURN(FLOAT_VAL);
-[1-9][0-9]*                 DO_RETURN(INT_VAL);
+[0-9]+\.[0-9]+               DO_RETURN(FLOAT_VAL);
+[0-9]*                 DO_RETURN(INT_VAL);
 [/][/].*$                       {};
-[a-zA-Z_][0-9a-zA-Z_]*      DO_RETURN(IDENTIFIER);
+[a-zA-Z_][0-9a-zA-Z_]*      {
+				yylval.symbol = g_symbolTable.FindLocal(yytext);
+                                if(yylval.symbol == nullptr) yylval.symbol = new cSymbol(yytext);
+				g_symbolTable.Insert(yylval.symbol);
+                                return IDENTIFIER;
+                            };
 . DO_RETURN(JUNK_TOKEN);
 
 %%

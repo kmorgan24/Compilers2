@@ -1,2 +1,10 @@
 Lab 1 Feedback
+Your repository contained build products (lang and langlex.c). it should only contain source.
+[Fixed]
+
+-2 C allows integers to have leading zeros (they imply octal but they are still legal). You dont allow leading zeros including the integer value 0.
+[Fixed]
+
+instead of hardcoding a tab character you chould use \t
+[Fixed]
 
