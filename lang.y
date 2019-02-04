@@ -11,6 +11,8 @@
 #include <iostream>
 #include "lex.h"
 #include "astnodes.h"
+#include "cSymbolTable.h"
+
 
 %}
 
@@ -19,6 +21,7 @@
  /* union defines the type for lexical values */
 %union{
     int             int_val;
+    float           float_val;
     cAstNode*       ast_node;
     cProgramNode*   program_node;
     cBlockNode*     block_node;
@@ -93,9 +96,9 @@ program: PROGRAM block          { $$ = new cProgramNode($2);
 block:  open decls stmts close  {  }
     |   open stmts close        { $$ = new cBlockNode(nullptr, $2); }
 
-open:   '{'                     { /* $$ = g_SymbolTable.IncreaseScope(); */ }
+open:   '{'                     { /* $$ = g_symbolTable.IncreaseScope();*/  }
 
-close:  '}'                     { /* $$ = g_SymbolTable.DecreaseScope(); */ }
+close:  '}'                     { /* $$ =  g_symbolTable.DecreaseScope();*/  }
 
 decls:      decls decl          {  }
         |   decl                {  }
@@ -128,7 +131,7 @@ paramsspec: paramsspec',' paramspec
 
 paramspec:  var_decl            {  }
 
-stmts:      stmts stmt          {  }
+stmts:      stmts stmt          { $1->AddChild($2); }
         |   stmt                { $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
@@ -176,7 +179,7 @@ term:       term '*' fact       {  }
 
 fact:        '(' expr ')'       {  }
         |   INT_VAL             { $$ = new cIntExprNode($1); }
-        |   FLOAT_VAL           {  }
+        |   FLOAT_VAL           { $$ = new cFloatExprNode($1); }
         |   varref              {  }
 
 %%

@@ -11,6 +11,7 @@
 //
 
 #include "cSymbol.h"
+#include "cSymbolTable.h"
 #include <string>
 #include <iostream>
 #include <unordered_map>

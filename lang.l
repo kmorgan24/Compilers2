@@ -8,8 +8,10 @@
 //
 
 #include "lex.h"
-#include "tokens.h"
+#include "langparse.h"
 #include "cSymbolTable.h"
+#include "astnodes.h"
+
 
 // Macros that can be used to create debug output from the scanner
 // The first one does NOT create debug output, the second does.
@@ -39,23 +41,23 @@ period          ['.']
 "else"                      DO_RETURN(ELSE);
 "while"                     DO_RETURN(WHILE);
 "print"                     DO_RETURN(PRINT);
-"int"                       DO_RETURN(INT);
-"float"                     DO_RETURN(FLOAT);
+"int"                       DO_RETURN(INT_VAL);
+"float"                     DO_RETURN(FLOAT_VAL);
 "struct"                    DO_RETURN(STRUCT);
 "return"                    DO_RETURN(RETURN);
 "array"                     DO_RETURN(ARRAY);
-"char"                      DO_RETURN(CHAR);
-"endif"			    DO_RETURN(ENDIF);
+"char"                      DO_RETURN(CHAR_VAL);
+"endif"			            DO_RETURN(ENDIF);
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
 "{"                         {
-				g_symbolTable.IncreaseScope();
-				return yytext[0];
-			    };
+				                /*g_symbolTable.IncreaseScope()*/;
+				                return yytext[0];
+			                };
 "}"                         {
-				g_symbolTable.DecreaseScope();
-				return yytext[0];
-			    };
+				                /*g_symbolTable.DecreaseScope()*/;
+				                return yytext[0];
+			                };
 "["                         DO_RETURN('[');
 "]"                         DO_RETURN(']');
 ";"                         DO_RETURN(';');
@@ -73,13 +75,20 @@ period          ['.']
 " "                         {};
 "\t"                        {};
 "\n"                        {};
-[0-9]+\.[0-9]+               DO_RETURN(FLOAT_VAL);
-[0-9]*                 DO_RETURN(INT_VAL);
-[/][/].*$                       {};
+[0-9]+\.[0-9]+              {
+                                yylval.float_val = atof(yytext);
+                                DO_RETURN(FLOAT_VAL);
+                            };
+[0-9]*                      {
+                                yylval.int_val = atoi(yytext);
+                                DO_RETURN(INT_VAL);
+                            }
+
+[/][/].*$                   {};
 [a-zA-Z_][0-9a-zA-Z_]*      {
-				yylval.symbol = g_symbolTable.FindLocal(yytext);
+				                /*yylval.symbol = g_symbolTable.FindLocal(yytext);
                                 if(yylval.symbol == nullptr) yylval.symbol = new cSymbol(yytext);
-				g_symbolTable.Insert(yylval.symbol);
+				                g_symbolTable.Insert(yylval.symbol);*/
                                 return IDENTIFIER;
                             };
 . DO_RETURN(JUNK_TOKEN);
