@@ -84,6 +84,7 @@
 %type <ast_node> varref
 %type <symbol> varpart
 
+
 %%
 
 program: PROGRAM block          { $$ = new cProgramNode($2);
@@ -168,14 +169,14 @@ param:      expr                {  }
 expr:       expr EQUALS addit   {  }
         |   addit               { $$ = $1; }
 
-addit:      addit '+' term      {  }
-        |   addit '-' term      {  }
+addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); }
+        |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); }
         |   term                {  }
 
-term:       term '*' fact       {  }
-        |   term '/' fact       {  }
-        |   term '%' fact       {  }
-        |   fact                {  }
+term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3);  }
+        |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); }
+        |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); }
+        |   fact                { $$ = $1; }
 
 fact:        '(' expr ')'       {  }
         |   INT_VAL             { $$ = new cIntExprNode($1); }

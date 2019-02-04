@@ -23,4 +23,6 @@
 #include "cPrintNode.h"
 #include "cExprNode.h"
 #include "cIntExprNode.h"
+#include "cFloatExprNode.h"
+#include "cMathExprNode.h"
 
