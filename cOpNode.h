@@ -9,6 +9,7 @@
 //
 
 #include "cAstNode.h"
+#include "astnodes.h"
 #include "langparse.h"
 
 class cOpNode : public cAstNode

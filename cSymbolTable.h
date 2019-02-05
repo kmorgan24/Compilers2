@@ -11,7 +11,6 @@
 //
 
 #include "cSymbol.h"
-#include "cSymbolTable.h"
 #include <string>
 #include <iostream>
 #include <unordered_map>
@@ -25,15 +24,18 @@ using std::pair;
 using std::endl;
 using std::cout;
 
+typedef unordered_map<string, cSymbol *> symbolTable_t;
 
 class cSymbolTable
 {
     public:
-        typedef unordered_map<string, cSymbol *> symbolTable_t;
-        // Create a symbol table
+         // Create a symbol table
         cSymbolTable()
 	{
 		IncreaseScope();
+		Insert(new cSymbol("char", true));
+		Insert(new cSymbol("int", true));
+		Insert(new cSymbol("float", true));
 	}
 
         // Increase the scope: add a level to the nested symbol table

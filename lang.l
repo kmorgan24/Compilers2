@@ -8,9 +8,8 @@
 //
 
 #include "lex.h"
-#include "langparse.h"
-#include "cSymbolTable.h"
 #include "astnodes.h"
+#include "langparse.h"
 
 
 // Macros that can be used to create debug output from the scanner
@@ -41,12 +40,13 @@ period          ['.']
 "else"                      DO_RETURN(ELSE);
 "while"                     DO_RETURN(WHILE);
 "print"                     DO_RETURN(PRINT);
-"int"                       DO_RETURN(INT_VAL);
-"float"                     DO_RETURN(FLOAT_VAL);
+"char"                      {yylval.symbol = g_symbolTable.Find(yytext); DO_RETURN(TYPE_ID);}
+"int"                       {yylval.symbol = g_symbolTable.Find(yytext); DO_RETURN(TYPE_ID);}
+"float"                     {yylval.symbol = g_symbolTable.Find(yytext); DO_RETURN(TYPE_ID);}
 "struct"                    DO_RETURN(STRUCT);
 "return"                    DO_RETURN(RETURN);
 "array"                     DO_RETURN(ARRAY);
-"char"                      DO_RETURN(CHAR_VAL);
+
 "endif"			            DO_RETURN(ENDIF);
 "("                         DO_RETURN('(');
 ")"                         DO_RETURN(')');
@@ -86,9 +86,15 @@ period          ['.']
 
 [/][/].*$                   {};
 [a-zA-Z_][0-9a-zA-Z_]*      {
-				                /*yylval.symbol = g_symbolTable.FindLocal(yytext);
-                                if(yylval.symbol == nullptr) yylval.symbol = new cSymbol(yytext);
-				                g_symbolTable.Insert(yylval.symbol);*/
+				                yylval.symbol = g_symbolTable.Find(yytext);
+                                
+                                if(yylval.symbol == nullptr)
+                                {
+                                    yylval.symbol = new cSymbol(yytext);
+                                    
+				                    g_symbolTable.Insert(yylval.symbol); 
+                                }
+                                if(yylval.symbol->isType()) return TYPE_ID; 
                                 return IDENTIFIER;
                             };
 . DO_RETURN(JUNK_TOKEN);

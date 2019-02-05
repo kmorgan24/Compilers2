@@ -12,7 +12,11 @@
 #include "lex.h"
 #include "astnodes.h"
 #include "cSymbolTable.h"
-
+// questions
+// 0. 
+// 1. 
+// 2. 
+// 3. what do i change in lang.l
 
 %}
 
@@ -29,7 +33,10 @@
     cPrintNode*     stmt_node;
     cExprNode*      expr_node;
     cIntExprNode*   int_node;
+    cDeclsNode*     decls_node;
+    cDeclNode*      decl_node;
     cSymbol*        symbol;
+    symbolTable_t*  sym_table; // have to do this for $$ = g_symbolTable ?
     }
 
 %{
@@ -59,11 +66,11 @@
 
 %type <program_node> program
 %type <block_node> block
-%type <ast_node> open
-%type <ast_node> close
-%type <ast_node> decls
-%type <ast_node> decl
-%type <ast_node> var_decl
+%type <sym_table> open
+%type <sym_table> close
+%type <decls_node> decls
+%type <decl_node> decl
+%type <decl_node> var_decl
 %type <ast_node> struct_decl
 %type <ast_node> array_decl
 %type <ast_node> func_decl
@@ -81,8 +88,9 @@
 %type <expr_node> addit
 %type <expr_node> term
 %type <expr_node> fact
-%type <ast_node> varref
+%type <expr_node> varref
 %type <symbol> varpart
+
 
 
 %%
@@ -94,22 +102,22 @@ program: PROGRAM block          { $$ = new cProgramNode($2);
                                   else
                                       YYABORT;
                                 }
-block:  open decls stmts close  {  }
+block:  open decls stmts close  { $$ = new cBlockNode($2, $3);  }
     |   open stmts close        { $$ = new cBlockNode(nullptr, $2); }
 
-open:   '{'                     { /* $$ = g_symbolTable.IncreaseScope();*/  }
+open:   '{'                     {  $$ = g_symbolTable.IncreaseScope(); }
 
-close:  '}'                     { /* $$ =  g_symbolTable.DecreaseScope();*/  }
+close:  '}'                     {  $$ =  g_symbolTable.DecreaseScope();  }
 
-decls:      decls decl          {  }
-        |   decl                {  }
+decls:      decls decl          { $1->AddChild($2); }
+        |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     {  }
         |   array_decl ';'      {  }
         |   func_decl           {  }
         |   error ';'           {  }
 
-var_decl:   TYPE_ID IDENTIFIER  {  }
+var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 {  }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
@@ -171,7 +179,7 @@ expr:       expr EQUALS addit   {  }
 
 addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); }
         |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); }
-        |   term                {  }
+        |   term                { $$ = $1; }
 
 term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3);  }
         |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); }
@@ -181,7 +189,7 @@ term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $
 fact:        '(' expr ')'       {  }
         |   INT_VAL             { $$ = new cIntExprNode($1); }
         |   FLOAT_VAL           { $$ = new cFloatExprNode($1); }
-        |   varref              {  }
+        |   varref              { $$ = new cVarRefNode($1); }
 
 %%
 
