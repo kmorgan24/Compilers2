@@ -9,7 +9,8 @@
 //
 
 #include "cAstNode.h"
-#include "cStmtNode.h"
+#include "cExprNode.h"
+
 
 class cVarRefNode : public cExprNode
 {
