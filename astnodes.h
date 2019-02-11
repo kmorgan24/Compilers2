@@ -176,3 +176,5 @@
  *      
 *****************************************/
 #include "cWhileStatementNode.h"
+
+#include "cAssignNode.h"
