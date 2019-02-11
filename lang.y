@@ -146,7 +146,7 @@ stmts:      stmts stmt          { $1->AddChild($2); }
 stmt:       IF '(' expr ')' stmts ENDIF ';'
                                 { $$ = new cIfStatementNode($3, $5); }
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
-                                {  }
+                                { $$ = new cIfStatementNode($3, $5, $7); }
         |   WHILE '(' expr ')' stmt 
                                 {  }
         |   PRINT '(' expr ')' ';'

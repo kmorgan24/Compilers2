@@ -25,6 +25,12 @@ class cIfStatementNode : public cStmtNode
             AddChild(expr);
             AddChild(stmt);
         }
+        cIfStatementNode(cExprNode *expr, cStmtsNode* stmt, cStmtsNode* elsestmt) : cStmtNode()
+        {
+            AddChild(expr);
+            AddChild(stmt);
+            AddChild(elsestmt);
+        }
 
         virtual string NodeType() { return string("if"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
