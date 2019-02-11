@@ -148,7 +148,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
                                 { $$ = new cIfStatementNode($3, $5, $7); }
         |   WHILE '(' expr ')' stmt 
-                                {  }
+                                { $$ = new cWhileStatementNode($3, $5); }
         |   PRINT '(' expr ')' ';'
                                 { $$ = new cPrintNode($3); }
         |   lval '=' expr ';'   {  }
