@@ -16,7 +16,7 @@
 // 0. 
 // 1. 
 // 2. 
-// 3. what do i change in lang.l
+// 3. 
 
 %}
 
@@ -30,7 +30,7 @@
     cProgramNode*   program_node;
     cBlockNode*     block_node;
     cStmtsNode*     stmts_node;
-    cPrintNode*     stmt_node;
+    cStmtNode*      stmt_node;
     cExprNode*      expr_node;
     cIntExprNode*   int_node;
     cDeclsNode*     decls_node;
@@ -144,7 +144,7 @@ stmts:      stmts stmt          { $1->AddChild($2); }
         |   stmt                { $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
-                                {  }
+                                { $$ = new cIfStatementNode($3, $5); }
         |   IF '(' expr ')' stmts ELSE stmts ENDIF ';'
                                 {  }
         |   WHILE '(' expr ')' stmt 
@@ -155,7 +155,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   lval '=' func_call ';'   {  }
         |   func_call ';'       {  }
         |   block               {  }
-        |   RETURN expr ';'     {  }
+        |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {}
 
 func_call:  IDENTIFIER '(' params ')' {  }
@@ -163,9 +163,9 @@ func_call:  IDENTIFIER '(' params ')' {  }
 
 varref:   varref '.' varpart    {  }
         | varref '[' expr ']'   {  }
-        | varpart               {  }
+        | varpart               { $$ = new cVarRefNode($1); }
 
-varpart:  IDENTIFIER            {  }
+varpart:  IDENTIFIER            { $$ = $1; }
 
 lval:     varref                {  }
 
@@ -186,10 +186,10 @@ term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $
         |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); }
         |   fact                { $$ = $1; }
 
-fact:        '(' expr ')'       {  }
+fact:        '(' expr ')'       { $$= $2; }
         |   INT_VAL             { $$ = new cIntExprNode($1); }
         |   FLOAT_VAL           { $$ = new cFloatExprNode($1); }
-        |   varref              { $$ = new cVarRefNode($1); }
+        |   varref              { $$ = $1; }
 
 %%
 
