@@ -35,6 +35,7 @@
     cIntExprNode*   int_node;
     cDeclsNode*     decls_node;
     cDeclNode*      decl_node;
+    cStructDeclNode* struct_node;
     cSymbol*        symbol;
     symbolTable_t*  sym_table; // have to do this for $$ = g_symbolTable ?
     }
@@ -71,7 +72,7 @@
 %type <decls_node> decls
 %type <decl_node> decl
 %type <decl_node> var_decl
-%type <ast_node> struct_decl
+%type <struct_node> struct_decl
 %type <ast_node> array_decl
 %type <ast_node> func_decl
 %type <ast_node> func_header
@@ -112,14 +113,16 @@ close:  '}'                     {  $$ =  g_symbolTable.DecreaseScope();  }
 decls:      decls decl          { $1->AddChild($2); }
         |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
-        |   struct_decl ';'     {  }
+        |   struct_decl ';'     { $$ = $1; }
         |   array_decl ';'      {  }
         |   func_decl           {  }
         |   error ';'           {  }
 
 var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
 struct_decl:  STRUCT open decls close IDENTIFIER    
-                                {  }
+                                { 
+                                    $$ = new cStructDeclNode($3, $5);
+                                }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
                                 {  }
 
@@ -161,7 +164,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
 func_call:  IDENTIFIER '(' params ')' {  }
         |   IDENTIFIER '(' ')'  {  }
 
-varref:   varref '.' varpart    {  }
+varref:   varref '.' varpart    { $1->AddChild($3); }
         | varref '[' expr ']'   {  }
         | varpart               { $$ = new cVarRefNode($1); }
 

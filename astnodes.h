@@ -129,6 +129,8 @@
 *****************************************/
 #include "cIfStatementNode.h"
 
+#include "cStructDeclNode.h"
+
 /****************************************
  * Needs:
  *      cAstNode.h
@@ -178,3 +180,4 @@
 #include "cWhileStatementNode.h"
 
 #include "cAssignNode.h"
+
