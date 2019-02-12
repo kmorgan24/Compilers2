@@ -126,7 +126,7 @@ struct_decl:  STRUCT open decls close IDENTIFIER
                                     $$ = new cStructDeclNode($3, $5);
                                 }
 array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
-                                {  }
+                                { $$ = new cArrayDeclNode($2, $4, $6); }
 
 func_decl:  func_header ';'
                                 { g_symbolTable.DecreaseScope(); $$ = $1; }
@@ -158,7 +158,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
                                 { $$ = new cPrintNode($3); }
         |   lval '=' expr ';'   { $$ = new cAssignNode($1, $3); }
         |   lval '=' func_call ';'   { $$ = new cAssignNode($1, $3); }
-        |   func_call ';'       {  }
+        |   func_call ';'       { $$ = $1; }
         |   block               {  }
         |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {}
@@ -167,7 +167,7 @@ func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); }
         |   IDENTIFIER '(' ')'  { $$ = new cFuncCallNode($1); }
 
 varref:   varref '.' varpart    { $1->AddChild($3); }
-        | varref '[' expr ']'   {  }
+        | varref '[' expr ']'   { $1->AddChild($3); }
         | varpart               { $$ = new cVarRefNode($1); }
 
 varpart:  IDENTIFIER            { $$ = $1; }

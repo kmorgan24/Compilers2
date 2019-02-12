@@ -139,6 +139,8 @@
 
 #include "cParamNode.h"
 
+#include "cArrayDeclNode.h"
+
 /****************************************
  * Needs:
  *      cAstNode.h
