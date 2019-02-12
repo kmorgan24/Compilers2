@@ -179,7 +179,7 @@ params:     params',' param     { $1->AddChild($3); }
 
 param:      expr                { $$ = new cParamNode($1); }
 
-expr:       expr EQUALS addit   {  }
+expr:       expr EQUALS addit   { $$ = new cMathExprNode($1, new cOpNode(EQUALS), $3); }
         |   addit               { $$ = $1; }
 
 addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); }
