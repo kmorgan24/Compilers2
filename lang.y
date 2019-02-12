@@ -36,6 +36,8 @@
     cDeclsNode*     decls_node;
     cDeclNode*      decl_node;
     cStructDeclNode* struct_node;
+    cFuncDeclNode*  func_node;
+    cParamNode*     param_node;
     cSymbol*        symbol;
     symbolTable_t*  sym_table; // have to do this for $$ = g_symbolTable ?
     }
@@ -74,17 +76,17 @@
 %type <decl_node> var_decl
 %type <struct_node> struct_decl
 %type <ast_node> array_decl
-%type <ast_node> func_decl
-%type <ast_node> func_header
-%type <ast_node> func_prefix
-%type <ast_node> func_call
-%type <ast_node> paramsspec
-%type <ast_node> paramspec
+%type <func_node> func_decl
+%type <func_node> func_header
+%type <func_node> func_prefix
+%type <expr_node> func_call
+%type <decl_node> paramsspec
+%type <decl_node> paramspec
 %type <stmts_node> stmts
 %type <stmt_node> stmt
 %type <expr_node> lval
-%type <ast_node> params
-%type <ast_node> param
+%type <expr_node> params
+%type <param_node> param
 %type <expr_node> expr
 %type <expr_node> addit
 %type <expr_node> term
@@ -115,7 +117,7 @@ decls:      decls decl          { $1->AddChild($2); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     { $$ = $1; }
         |   array_decl ';'      {  }
-        |   func_decl           {  }
+        |   func_decl           { $$ = $1; }
         |   error ';'           {  }
 
 var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
@@ -127,21 +129,21 @@ array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
                                 {  }
 
 func_decl:  func_header ';'
-                                {  }
+                                { g_symbolTable.DecreaseScope(); $$ = $1; }
         |   func_header  '{' decls stmts '}'
-                                {  }
+                                { g_symbolTable.DecreaseScope(); $1->AddChild($3); $1->AddChild($4); }
         |   func_header  '{' stmts '}'
-                                {  }
+                                { g_symbolTable.DecreaseScope(); $1->AddChild($3); }
 func_header: func_prefix paramsspec ')'
-                                {  }
-        |    func_prefix ')'    {  }
+                                { $1->AddChild($2); }
+        |    func_prefix ')'    { $$ = $1; }
 func_prefix: TYPE_ID IDENTIFIER '('
-                                {  }
+                                { g_symbolTable.IncreaseScope(); $$ = new cFuncDeclNode($1, $2); }
 paramsspec: paramsspec',' paramspec 
-                                {  }
-        |   paramspec           {  }
+                                { $1->AddChild($3); }
+        |   paramspec           { $$ = new cFuncArgsNode($1); }
 
-paramspec:  var_decl            {  }
+paramspec:  var_decl            { $$ = $1; }
 
 stmts:      stmts stmt          { $1->AddChild($2); }
         |   stmt                { $$ = new cStmtsNode($1); }
@@ -155,14 +157,14 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   PRINT '(' expr ')' ';'
                                 { $$ = new cPrintNode($3); }
         |   lval '=' expr ';'   { $$ = new cAssignNode($1, $3); }
-        |   lval '=' func_call ';'   {  }
+        |   lval '=' func_call ';'   { $$ = new cAssignNode($1, $3); }
         |   func_call ';'       {  }
         |   block               {  }
         |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {}
 
-func_call:  IDENTIFIER '(' params ')' {  }
-        |   IDENTIFIER '(' ')'  {  }
+func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); }
+        |   IDENTIFIER '(' ')'  { $$ = new cFuncCallNode($1); }
 
 varref:   varref '.' varpart    { $1->AddChild($3); }
         | varref '[' expr ']'   {  }
@@ -172,10 +174,10 @@ varpart:  IDENTIFIER            { $$ = $1; }
 
 lval:     varref                { $$ = $1; }
 
-params:     params',' param     {  }
-        |   param               {  }
+params:     params',' param     { $1->AddChild($3); }
+        |   param               { $$ = $1; }
 
-param:      expr                {  }
+param:      expr                { $$ = new cParamNode($1); }
 
 expr:       expr EQUALS addit   {  }
         |   addit               { $$ = $1; }

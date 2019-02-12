@@ -131,6 +131,14 @@
 
 #include "cStructDeclNode.h"
 
+#include "cFuncDeclNode.h"
+
+#include "cFuncArgsNode.h"
+
+#include "cFuncCallNode.h"
+
+#include "cParamNode.h"
+
 /****************************************
  * Needs:
  *      cAstNode.h
