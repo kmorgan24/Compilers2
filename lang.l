@@ -92,9 +92,10 @@ period          ['.']
                                 {
                                     yylval.symbol = new cSymbol(yytext);
                                     
-				                    g_symbolTable.Insert(yylval.symbol); 
+				                    //g_symbolTable.Insert(yylval.symbol); 
                                 }
-                                if(yylval.symbol->isType()) return TYPE_ID; 
+                                if(yylval.symbol->isType()) return TYPE_ID;
+                                 
                                 return IDENTIFIER;
                             };
 . DO_RETURN(JUNK_TOKEN);

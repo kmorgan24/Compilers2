@@ -17,13 +17,21 @@ class cVarDeclNode : public cDeclNode
     public:
         // param is the first decl in this decls
         cVarDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
-        {
-                if(!g_symbolTable.Find(name->GetName()))
-                {
-                     name = new cSymbol(name->GetName());
-                     g_symbolTable.Insert(name);
-                }
-              
+        {   
+            if (!g_symbolTable.Find(name->GetName())) 
+            {
+                g_symbolTable.Insert(name);
+            }
+            else
+            {
+                name = new cSymbol(name->GetName());
+                g_symbolTable.Insert(name);
+            }
+            
+                         
+
+                
+                
 
             AddChild(type);
             AddChild(name);
