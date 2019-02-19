@@ -18,6 +18,11 @@ class cVarDeclNode : public cDeclNode
         // param is the first decl in this decls
         cVarDeclNode(cSymbol *type, cSymbol *name) : cDeclNode()
         {   
+            if (g_symbolTable.FindLocal(name->GetName())) 
+            {
+                SemanticError("Symbol " + name->GetName() + "already defined in current scope");
+            }
+            
             if (!g_symbolTable.Find(name->GetName())) 
             {
                 g_symbolTable.Insert(name);

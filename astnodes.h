@@ -10,6 +10,9 @@
 //
 // Date: Jan. 18, 2015
 //
+#include <iostream>
+void SemanticError(std::string error);
+
 /****************************************
  * Needs:
  *      None

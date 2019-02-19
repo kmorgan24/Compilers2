@@ -12,6 +12,7 @@
 #include "lex.h"
 #include "astnodes.h"
 #include "cSymbolTable.h"
+
 // questions
 // 0. 
 // 1. 
@@ -46,6 +47,19 @@
     int yyerror(const char *msg);
 
     cAstNode *yyast_root;
+    bool g_semanticErrorHappened = false;
+// Function that gets called when a semantic error happens
+void SemanticError(std::string error)
+{
+    std::cout << "ERROR: " << error << " on line " 
+              << yylineno << "\n";
+    g_semanticErrorHappened = true;
+    yynerrs++;
+}
+#define CHECK_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; } }
+#define PROP_ERROR() { if (g_semanticErrorHappened) \
+    { g_semanticErrorHappened = false; YYERROR; } }
 %}
 
 %start  program
@@ -112,7 +126,7 @@ open:   '{'                     {  $$ = g_symbolTable.IncreaseScope(); }
 
 close:  '}'                     {  $$ =  g_symbolTable.DecreaseScope();  }
 
-decls:      decls decl          { $1->AddChild($2); }
+decls:      decls decl          { $1->Insert($2); }
         |   decl                { $$ = new cDeclsNode($1); }
 decl:       var_decl ';'        { $$ = $1; }
         |   struct_decl ';'     { $$ = $1; }
@@ -131,21 +145,21 @@ array_decl: ARRAY TYPE_ID '[' INT_VAL ']' IDENTIFIER
 func_decl:  func_header ';'
                                 { g_symbolTable.DecreaseScope(); $$ = $1; }
         |   func_header  '{' decls stmts '}'
-                                { g_symbolTable.DecreaseScope(); $1->AddChild($3); $1->AddChild($4); }
+                                { g_symbolTable.DecreaseScope(); $1->Insert($3); $1->Insert($4); }
         |   func_header  '{' stmts '}'
-                                { g_symbolTable.DecreaseScope(); $1->AddChild($3); }
+                                { g_symbolTable.DecreaseScope(); $1->Insert($3); }
 func_header: func_prefix paramsspec ')'
-                                { $1->AddChild($2); }
+                                { $1->Insert($2); }
         |    func_prefix ')'    { $$ = $1; }
 func_prefix: TYPE_ID IDENTIFIER '('
                                 { g_symbolTable.IncreaseScope(); $$ = new cFuncDeclNode($1, $2); }
 paramsspec: paramsspec',' paramspec 
-                                { $1->AddChild($3); }
+                                { $1->Insert($3); }
         |   paramspec           { $$ = new cFuncArgsNode($1); }
 
 paramspec:  var_decl            { $$ = $1; }
 
-stmts:      stmts stmt          { $1->AddChild($2); }
+stmts:      stmts stmt          { $1->Insert($2); }
         |   stmt                { $$ = new cStmtsNode($1); }
 
 stmt:       IF '(' expr ')' stmts ENDIF ';'
@@ -166,15 +180,15 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
 func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); }
         |   IDENTIFIER '(' ')'  { $$ = new cFuncCallNode($1); }
 
-varref:   varref '.' varpart    { $1->AddChild($3); }
-        | varref '[' expr ']'   { $1->AddChild($3); }
+varref:   varref '.' varpart    { $1->Insert($3); }
+        | varref '[' expr ']'   { $1->Insert($3); }
         | varpart               { $$ = new cVarRefNode($1); }
 
 varpart:  IDENTIFIER            { $$ = $1; }
 
 lval:     varref                { $$ = $1; }
 
-params:     params',' param     { $1->AddChild($3); }
+params:     params',' param     { $1->Insert($3); }
         |   param               { $$ = $1; }
 
 param:      expr                { $$ = new cParamNode($1); }

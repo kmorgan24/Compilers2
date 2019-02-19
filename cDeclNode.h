@@ -15,4 +15,5 @@ class cDeclNode : public cAstNode
 {
     public:
         cDeclNode() : cAstNode() {}
+        void Insert(cAstNode* p){AddChild(p);}
 };
