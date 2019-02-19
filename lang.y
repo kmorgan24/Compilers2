@@ -134,7 +134,7 @@ decl:       var_decl ';'        { $$ = $1; }
         |   func_decl           { $$ = $1; }
         |   error ';'           {  }
 
-var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); }
+var_decl:   TYPE_ID IDENTIFIER  { $$ = new cVarDeclNode($1, $2); PROP_ERROR();}
 struct_decl:  STRUCT open decls close IDENTIFIER    
                                 { 
                                     $$ = new cStructDeclNode($3, $5);
@@ -182,7 +182,7 @@ func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); }
 
 varref:   varref '.' varpart    { $1->Insert($3); }
         | varref '[' expr ']'   { $1->Insert($3); }
-        | varpart               { $$ = new cVarRefNode($1); }
+        | varpart               { $$ = new cVarRefNode($1); PROP_ERROR(); }
 
 varpart:  IDENTIFIER            { $$ = $1; }
 

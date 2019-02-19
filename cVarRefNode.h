@@ -7,7 +7,7 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
-
+#include "astnodes.h"
 #include "cAstNode.h"
 #include "cExprNode.h"
 
@@ -16,8 +16,12 @@ class cVarRefNode : public cExprNode
 {
     public:
         // param is first stmt in the list of statements
-        cVarRefNode(cAstNode *varref) : cExprNode()
+        cVarRefNode(cSymbol *varref) : cExprNode()
         {
+            if (!g_symbolTable.Find(varref->GetName())) {
+                SemanticError("Symbol " + varref->GetName() + " not defined");
+            }
+            
             AddChild(varref);
         }
 
