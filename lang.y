@@ -196,13 +196,13 @@ param:      expr                { $$ = new cParamNode($1); }
 expr:       expr EQUALS addit   { $$ = new cMathExprNode($1, new cOpNode(EQUALS), $3); CHECK_ERROR(); }
         |   addit               { $$ = $1; }
 
-addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); CHECK_ERROR(); }
-        |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); CHECK_ERROR();}
+addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); PROP_ERROR(); }
+        |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); PROP_ERROR();}
         |   term                { $$ = $1; }
 
-term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3); CHECK_ERROR(); }
-        |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); CHECK_ERROR();}
-        |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); CHECK_ERROR();}
+term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3); PROP_ERROR(); }
+        |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); PROP_ERROR();}
+        |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); PROP_ERROR();}
         |   fact                { $$ = $1; }
 
 fact:        '(' expr ')'       { $$= $2; }
