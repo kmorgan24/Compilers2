@@ -16,4 +16,5 @@ class cDeclNode : public cAstNode
     public:
         cDeclNode() : cAstNode() {}
         void Insert(cAstNode* p){AddChild(p);}
+        cDeclNode* GetType(){return dynamic_cast<cDeclNode*>(GetChild(0));}
 };

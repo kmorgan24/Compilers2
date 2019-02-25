@@ -25,18 +25,15 @@ class cVarDeclNode : public cDeclNode
             
             if (!g_symbolTable.Find(name->GetName())) 
             {
+                name->setBaseType(type->getBaseType());
                 g_symbolTable.Insert(name);
             }
             else
             {
                 name = new cSymbol(name->GetName());
+                name->setBaseType(type->getBaseType());
                 g_symbolTable.Insert(name);
             }
-            
-                         
-
-                
-                
 
             AddChild(type);
             AddChild(name);

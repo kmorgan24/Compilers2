@@ -170,7 +170,7 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
                                 { $$ = new cWhileStatementNode($3, $5); }
         |   PRINT '(' expr ')' ';'
                                 { $$ = new cPrintNode($3); }
-        |   lval '=' expr ';'   { $$ = new cAssignNode($1, $3); }
+        |   lval '=' expr ';'   { $$ = new cAssignNode($1, $3); CHECK_ERROR(); }
         |   lval '=' func_call ';'   { $$ = new cAssignNode($1, $3); }
         |   func_call ';'       { $$ = $1; }
         |   block               {  }
@@ -193,22 +193,22 @@ params:     params',' param     { $1->Insert($3); }
 
 param:      expr                { $$ = new cParamNode($1); }
 
-expr:       expr EQUALS addit   { $$ = new cMathExprNode($1, new cOpNode(EQUALS), $3); }
+expr:       expr EQUALS addit   { $$ = new cMathExprNode($1, new cOpNode(EQUALS), $3); CHECK_ERROR(); }
         |   addit               { $$ = $1; }
 
-addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); }
-        |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); }
+addit:      addit '+' term      { $$ = new cMathExprNode($1, new cOpNode('+'), $3); CHECK_ERROR(); }
+        |   addit '-' term      { $$ = new cMathExprNode($1, new cOpNode('-'), $3); CHECK_ERROR();}
         |   term                { $$ = $1; }
 
-term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3);  }
-        |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); }
-        |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); }
+term:       term '*' fact       { $$ = new cMathExprNode($1, new cOpNode('*'), $3); CHECK_ERROR(); }
+        |   term '/' fact       { $$ = new cMathExprNode($1, new cOpNode('/'), $3); CHECK_ERROR();}
+        |   term '%' fact       { $$ = new cMathExprNode($1, new cOpNode('%'), $3); CHECK_ERROR();}
         |   fact                { $$ = $1; }
 
 fact:        '(' expr ')'       { $$= $2; }
         |   INT_VAL             { $$ = new cIntExprNode($1); }
         |   FLOAT_VAL           { $$ = new cFloatExprNode($1); }
-        |   varref              { $$ = $1; }
+        |   varref              { $$ = $1; CHECK_ERROR();}
 
 %%
 

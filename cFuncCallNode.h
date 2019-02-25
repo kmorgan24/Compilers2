@@ -31,6 +31,10 @@ class cFuncCallNode : public cExprNode
         {
             AddChild(varref);
         }
+        cDeclNode* GetType()
+        {
+            return dynamic_cast<cDeclNode*>(dynamic_cast<cSymbol*>(GetChild(0))->getBaseType());
+        }
 
         virtual string NodeType() { return string("funcCall"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }

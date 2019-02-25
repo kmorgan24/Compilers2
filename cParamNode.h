@@ -26,7 +26,10 @@ class cParamNode : public cExprNode
         {
             AddChild(varref);
         }
-
+        cDeclNode* GetType()
+        {
+            return dynamic_cast<cDeclNode*>(GetChild(0));
+        }
         virtual string NodeType() { return string("params"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

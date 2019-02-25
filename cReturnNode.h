@@ -16,7 +16,7 @@ class cReturnNode : public cExprNode
 {
     public:
         // param is first stmt in the list of statements
-        cReturnNode(cAstNode *varref) : cExprNode()
+        cReturnNode(cExprNode *varref) : cExprNode()
         {
             AddChild(varref);
         }
@@ -25,6 +25,10 @@ class cReturnNode : public cExprNode
         void Insert(cAstNode *varref)
         {
             AddChild(varref);
+        }
+        cDeclNode* GetType()
+        {
+            return dynamic_cast<cDeclNode*>(dynamic_cast<cExprNode*>(GetChild(0))->GetType());
         }
 
         virtual string NodeType() { return string("return"); }

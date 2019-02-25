@@ -11,6 +11,7 @@
 //
 
 #include "cSymbol.h"
+#include "cBaseTypeNode.h"
 #include <string>
 #include <iostream>
 #include <unordered_map>
@@ -33,9 +34,15 @@ class cSymbolTable
         cSymbolTable()
 	{
 		IncreaseScope();
-		Insert(new cSymbol("char", true));
-		Insert(new cSymbol("int", true));
-		Insert(new cSymbol("float", true));
+		cSymbol* temp = new cSymbol("char", true);
+		temp->setBaseType(new cBaseTypeNode("char", 1, false));
+		Insert(temp);
+		temp = new cSymbol("int", true);
+		temp->setBaseType(new cBaseTypeNode("int", 4, false));
+		Insert(temp);
+		temp = new cSymbol("float", true);
+		temp->setBaseType(new cBaseTypeNode("float", 8, true));
+		Insert(temp);
 	}
 
         // Increase the scope: add a level to the nested symbol table

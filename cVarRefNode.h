@@ -30,7 +30,11 @@ class cVarRefNode : public cExprNode
         {
             AddChild(varref);
         }
-
+        cDeclNode* GetType()
+        {
+            cDeclNode* rval = dynamic_cast<cSymbol*>(GetChild(0))->getBaseType();
+            return rval;
+        }
         virtual string NodeType() { return string("varref"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

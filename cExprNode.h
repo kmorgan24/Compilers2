@@ -18,4 +18,5 @@ class cExprNode : public cStmtNode
     public:
         cExprNode() : cStmtNode() {}
         void Insert(cAstNode* p){AddChild(p);}
+        virtual cDeclNode *GetType() = 0;
 };
