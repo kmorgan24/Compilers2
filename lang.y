@@ -152,7 +152,7 @@ func_header: func_prefix paramsspec ')'
                                 { $1->Insert($2); }
         |    func_prefix ')'    { $$ = $1; }
 func_prefix: TYPE_ID IDENTIFIER '('
-                                { g_symbolTable.IncreaseScope(); $$ = new cFuncDeclNode($1, $2); }
+                                { $$ = new cFuncDeclNode($1, $2);  g_symbolTable.IncreaseScope();}
 paramsspec: paramsspec',' paramspec 
                                 { $1->Insert($3); }
         |   paramspec           { $$ = new cFuncArgsNode($1); }
@@ -177,8 +177,8 @@ stmt:       IF '(' expr ')' stmts ENDIF ';'
         |   RETURN expr ';'     { $$ = new cReturnNode($2); }
         |   error ';'           {}
 
-func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); }
-        |   IDENTIFIER '(' ')'  { $$ = new cFuncCallNode($1); }
+func_call:  IDENTIFIER '(' params ')' { $$ = new cFuncCallNode($1, $3); PROP_ERROR(); }
+        |   IDENTIFIER '(' ')'  { $$ = new cFuncCallNode($1); PROP_ERROR();}
 
 varref:   varref '.' varpart    { $1->Insert($3); }
         | varref '[' expr ']'   { $1->Insert($3); }

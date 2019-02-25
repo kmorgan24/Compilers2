@@ -25,12 +25,13 @@ class cFuncDeclNode : public cDeclNode
                 {
                     //name->setType(true);
                 }
-                
+                name->setBaseType(dynamic_cast<cBaseTypeNode*>(type->getBaseType()));
                 g_symbolTable.Insert(name);
             }
             else
             {
                 name = new cSymbol(name->GetName(), false);
+                name->setBaseType(dynamic_cast<cBaseTypeNode*>(type->getBaseType()));
                 g_symbolTable.Insert(name);
             }
             AddChild(type);

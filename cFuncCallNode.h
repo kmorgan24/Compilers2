@@ -23,6 +23,7 @@ class cFuncCallNode : public cExprNode
         }
         cFuncCallNode(cSymbol * symb, cExprNode* expr) : cExprNode()
         {     
+            symb->setBaseType(dynamic_cast<cBaseTypeNode*>(g_symbolTable.Find(symb->GetName())->getBaseType()));
             AddChild(symb);
             AddChild(expr);
            }
