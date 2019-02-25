@@ -26,6 +26,11 @@ class cFuncCallNode : public cExprNode
                 }
                 
             }
+            else
+            {
+                SemanticError(symb->GetName() + "is not declared");
+            }
+            
             
             AddChild(symb);
         }
@@ -35,6 +40,10 @@ class cFuncCallNode : public cExprNode
                if (symb->GetDecl()== nullptr) {
                     SemanticError(symb->GetName() + "is not a function");
                 }
+            }
+            else
+            {
+                SemanticError(symb->GetName() + "is not declared");
             }  
             symb->setBaseType(dynamic_cast<cBaseTypeNode*>(g_symbolTable.Find(symb->GetName())->getBaseType()));
             AddChild(symb);
