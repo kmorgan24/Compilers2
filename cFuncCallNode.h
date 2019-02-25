@@ -19,10 +19,23 @@ class cFuncCallNode : public cExprNode
         // param is first stmt in the list of statements
         cFuncCallNode(cSymbol *symb) : cExprNode()
         {
+            if (g_symbolTable.Find(symb->GetName()) != nullptr) {
+                
+                if (symb->GetDecl()== nullptr) {
+                    SemanticError(symb->GetName() + "is not a function");
+                }
+                
+            }
+            
             AddChild(symb);
         }
         cFuncCallNode(cSymbol * symb, cExprNode* expr) : cExprNode()
-        {     
+        {   
+            if (g_symbolTable.Find(symb->GetName()) != nullptr) {
+               if (symb->GetDecl()== nullptr) {
+                    SemanticError(symb->GetName() + "is not a function");
+                }
+            }  
             symb->setBaseType(dynamic_cast<cBaseTypeNode*>(g_symbolTable.Find(symb->GetName())->getBaseType()));
             AddChild(symb);
             AddChild(expr);
