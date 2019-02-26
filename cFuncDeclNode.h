@@ -31,6 +31,25 @@ class cFuncDeclNode : public cDeclNode
             }
             else
             {
+                cSymbol* temp = g_symbolTable.FindLocal(name->GetName());
+                if (temp) 
+                {
+                    if (temp->getBaseType() != type->getBaseType()) 
+                    {
+                        SemanticError(name->GetName() + " previously defined with different return type");
+                    }
+                    //cFuncDeclNode* funcsdecls = temp->GetDecl();
+                    // if () // check if already defined with more params
+                    // {
+                    //     /* code */
+                    // }
+                    // if (/* condition */) // check if defined with different params
+                    // {
+                    //     /* code */
+                    // }
+                    
+                }
+                
                 name = new cSymbol(name->GetName(), false);
                 name->setBaseType(dynamic_cast<cBaseTypeNode*>(type->getBaseType()));
                 name->SetDecl(this);
