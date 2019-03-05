@@ -50,3 +50,5 @@ void cVisitor::Visit(cSymbol *node) { VisitAllChildren(node); }
 void cVisitor::Visit(cVarDeclNode *node) { VisitAllChildren(node); }
 void cVisitor::Visit(cVarExprNode *node) { VisitAllChildren(node); }
 void cVisitor::Visit(cWhileNode *node) { VisitAllChildren(node); }
+void cVisitor::Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
+void cVisitor::Visit(cProgramNode *node) { VisitAllChildren(node); }
