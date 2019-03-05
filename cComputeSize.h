@@ -52,13 +52,14 @@ class cComputeSize : public cVisitor
 
     void Visit(cVarDeclNode *node)
     {
-        while (m_offset % 4 != 0)
+        int itemsize = node->Sizeof();
+        while (m_offset % 4 != 0 && itemsize != 1)
         {
             ++m_offset;
         }
         node->SetOffset(m_offset);
 
-        m_offset += node->Sizeof();
+        m_offset += itemsize;
         if (m_offset > m_highWater)
         {
             m_highWater = m_offset;
