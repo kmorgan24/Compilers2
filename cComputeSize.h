@@ -43,9 +43,17 @@ class cComputeSize : public cVisitor
     void Visit(cSymbol *node) { VisitAllChildren(node); }
     void Visit(cVarDeclNode *node)
     {
+        while (m_offset % 4 != 0)
+        {
+            ++m_offset;
+        }
         node->SetOffset(m_offset);
+
         m_offset += node->Sizeof();
-        m_highWater = m_offset;
+        if (m_offset > m_highWater)
+        {
+            m_highWater = m_offset;
+        }
     }
     void Visit(cVarExprNode *node) { VisitAllChildren(node); }
     void Visit(cWhileNode *node) { VisitAllChildren(node); }
