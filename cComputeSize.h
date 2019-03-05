@@ -6,6 +6,13 @@ class cComputeSize : public cVisitor
 {
     int m_offset;
     int m_highWater;
+    void Align()
+    {
+        while (m_offset % 4 != 0)
+        {
+            ++m_offset;
+        }
+    }
 
   public:
     cComputeSize() : cVisitor()
@@ -14,7 +21,7 @@ class cComputeSize : public cVisitor
         m_highWater = 0;
     }
 
-    void Visit(cBlockNode *node)
+    virtual void Visit(cBlockNode *node)
     {
         int startH = m_highWater;
         int startOff = m_offset;
@@ -36,37 +43,77 @@ class cComputeSize : public cVisitor
 
         m_offset = startOff;
     }
-    void Visit(cDeclNode *node) { VisitAllChildren(node); }
-    void Visit(cDeclsNode *node)
+    virtual void Visit(cDeclNode *node) { VisitAllChildren(node); }
+    virtual void Visit(cDeclsNode *node)
     {
         int startOff = m_offset;
         VisitAllChildren(node);
         node->SetSize(m_offset - startOff);
     }
 
-    void Visit(cFuncDeclNode *node)
+    virtual void Visit(cFuncDeclNode *node)
     {
         int startOff = m_offset;
         int startH = m_highWater;
         m_offset = 0;
         m_highWater = 0;
         VisitAllChildren(node);
-        while (m_offset % 4 != 0)
+        Align();
+        if (m_offset > m_highWater)
         {
-            ++m_offset;
+            m_highWater = m_offset;
         }
 
-        node->SetSize(m_offset);
+        node->SetSize(m_highWater);
         node->SetOffset(startOff - 8);
         m_offset = startOff;
         m_highWater = startH;
     }
 
-    void Visit(cParamListNode *node) { VisitAllChildren(node); }
+    virtual void Visit(cParamListNode *node)
+    {
+        int paramSize = 0;
+        for (int ii = 0; ii < node->NumParams(); ii++)
+        {
+            cExprNode *expr = node->GetParam(ii);
 
-    void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
+            if (expr != nullptr)
+            {
+                expr->Visit(this);
+                paramSize += expr->GetType()->Sizeof();
+            }
+        }
 
-    void Visit(cVarDeclNode *node)
+        node->SetSize(paramSize);
+    }
+
+    virtual void Visit(cParamsNode *node)
+    {
+        VisitAllChildren(node);
+        Align();
+
+        node->SetSize(m_offset);
+    }
+
+    virtual void Visit(cStructDeclNode *node)
+    {
+        int startOff = m_offset;
+        int startH = m_highWater;
+        m_offset = 0;
+        m_highWater = 0;
+        VisitAllChildren(node);
+        // while (m_offset % 4 != 0)
+        // {
+        //     ++m_offset;
+        // }
+
+        node->SetSize(m_highWater);
+        node->SetOffset(startOff - 8);
+        m_offset = startOff;
+        m_highWater = startH;
+    }
+
+    virtual void Visit(cVarDeclNode *node)
     {
         int itemsize = node->Sizeof();
         while (m_offset % 4 != 0 && itemsize != 1)
@@ -85,7 +132,10 @@ class cComputeSize : public cVisitor
             // }
         }
     }
-
+    virtual void Visit(cVarExprNode *node)
+    {
+        VisitAllChildren(node);
+    }
     virtual void VisitAllNodes(cAstNode *node)
     {
         VisitAllChildren(node);
@@ -93,20 +143,20 @@ class cComputeSize : public cVisitor
 
     // dont need?
 
-    void Visit(cSymbol *node) { VisitAllChildren(node); }
-    void Visit(cPrintNode *node) { VisitAllChildren(node); }
-    void Visit(cReturnNode *node) { VisitAllChildren(node); }
-    void Visit(cStmtNode *node) { VisitAllChildren(node); }
-    void Visit(cStmtsNode *node) { VisitAllChildren(node); }
-    void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
-    void Visit(cIfNode *node) { VisitAllChildren(node); }
-    void Visit(cIntExprNode *node) { VisitAllChildren(node); }
-    void Visit(cOpNode *node) { VisitAllChildren(node); }
-    void Visit(cExprNode *node) { VisitAllChildren(node); }
-    void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
-    void Visit(cAstNode *node) { VisitAllChildren(node); }
-    void Visit(cAssignNode *node) { VisitAllChildren(node); }
-    void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
-    void Visit(cVarExprNode *node) { VisitAllChildren(node); }
-    void Visit(cWhileNode *node) { VisitAllChildren(node); }
+    // void Visit(cSymbol *node) { VisitAllChildren(node); }
+    // void Visit(cPrintNode *node) { VisitAllChildren(node); }
+    // void Visit(cReturnNode *node) { VisitAllChildren(node); }
+    // void Visit(cStmtNode *node) { VisitAllChildren(node); }
+    // void Visit(cStmtsNode *node) { VisitAllChildren(node); }
+    // void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cIfNode *node) { VisitAllChildren(node); }
+    // void Visit(cIntExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cOpNode *node) { VisitAllChildren(node); }
+    // void Visit(cExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cAstNode *node) { VisitAllChildren(node); }
+    // void Visit(cAssignNode *node) { VisitAllChildren(node); }
+    // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
+
+    // void Visit(cWhileNode *node) { VisitAllChildren(node); }
 };
