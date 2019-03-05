@@ -35,6 +35,7 @@ class cBlockNode : public cStmtNode
     {
         m_sizeblock = s;
     }
+    int GetSize() { return m_sizeblock; }
     virtual string AttributesToString()
     {
         return " size=\"" + std::to_string(m_sizeblock) + "\"";
