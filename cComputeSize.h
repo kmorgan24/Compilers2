@@ -16,12 +16,16 @@ class cComputeSize : public cVisitor
     void Visit(cAstNode *node) { VisitAllChildren(node); }
     void Visit(cAssignNode *node) { VisitAllChildren(node); }
     void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
-    void Visit(cBlockNode *node) { VisitAllChildren(node); }
+    void Visit(cBlockNode *node)
+    {
+        VisitAllChildren(node);
+        node->SetSize(m_highWater);
+    }
     void Visit(cDeclNode *node) { VisitAllChildren(node); }
     void Visit(cDeclsNode *node)
     {
         VisitAllChildren(node);
-        //node->SetSize(m_offset);
+        node->SetSize(m_offset);
     }
     void Visit(cExprNode *node) { VisitAllChildren(node); }
     void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
@@ -41,6 +45,7 @@ class cComputeSize : public cVisitor
     {
         node->SetOffset(m_offset);
         m_offset += node->Sizeof();
+        m_highWater = m_offset;
     }
     void Visit(cVarExprNode *node) { VisitAllChildren(node); }
     void Visit(cWhileNode *node) { VisitAllChildren(node); }
