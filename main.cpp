@@ -6,26 +6,26 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
-// Date: Jan. 18, 2015
+// Date: Nov. 28, 2015
 //
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-//#include "cSymbolTable.h"
+#include "cSymbolTable.h"
 #include "lex.h"
 #include "astnodes.h"
 #include "langparse.h"
 
 // define global variables
-cSymbolTable g_symbolTable;
+cSymbolTable g_SymbolTable;
 long long cSymbol::nextId;
 
 // takes two string args: input_file, and output_file
 int main(int argc, char **argv)
 {
-    std::cout << "Kyronn Morgan" << std::endl;
+    std::cout << "Philip Howard" << std::endl;
 
     const char *outfile_name;
     int result = 0;
@@ -57,6 +57,8 @@ int main(int argc, char **argv)
 
     // fixup cout so it redirects to output
     std::cout.rdbuf(output.rdbuf());
+
+    g_SymbolTable.InitRootTable();
 
     result = yyparse();
     if (yyast_root != nullptr)

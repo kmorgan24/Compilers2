@@ -7,6 +7,8 @@
 // Author: Phil Howard 
 // phil.howard@oit.edu
 //
+// Date: Nov. 28, 2015
+//
 
 #include "cAstNode.h"
 #include "cDeclNode.h"
@@ -26,6 +28,14 @@ class cDeclsNode : public cAstNode
             AddChild(decl);
         }
 
+        int NumDecls() { return NumChildren(); }
+
+        cDeclNode *GetDecl(int index)
+        {
+            return (cDeclNode *)GetChild(index);
+        }
+
+        // return the XML node name
         virtual string NodeType() { return string("decls"); }
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

@@ -1,34 +1,15 @@
 #pragma once
-//**************************************
-// cStmtsNode.h
-//
-// Defines AST node that represents a list of statements
-//
-// Author: Phil Howard 
-// phil.howard@oit.edu
-//
 
 #include "cAstNode.h"
+#include "cStmtNode.h"
 #include "cExprNode.h"
 
-
-class cReturnNode : public cExprNode
+class cReturnNode : public cStmtNode
 {
     public:
-        // param is first stmt in the list of statements
-        cReturnNode(cExprNode *varref) : cExprNode()
+        cReturnNode(cExprNode *expr)
         {
-            AddChild(varref);
-        }
-
-        // Add a statement to the list
-        void Insert(cAstNode *varref)
-        {
-            AddChild(varref);
-        }
-        cDeclNode* GetType()
-        {
-            return dynamic_cast<cDeclNode*>(dynamic_cast<cExprNode*>(GetChild(0))->GetType());
+            AddChild(expr);
         }
 
         virtual string NodeType() { return string("return"); }

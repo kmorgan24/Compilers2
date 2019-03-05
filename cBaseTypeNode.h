@@ -1,40 +1,55 @@
 #pragma once
-#include "astnodes.h"
+//**************************************
+// cBaseTypeNode
+//
+// Defines virtual base class for all declarations.
+//
+// Author: Phil Howard 
+// phil.howard@oit.edu
+//
+// Date: Nov. 28, 2015
+//
+
 #include "cDeclNode.h"
 
 class cBaseTypeNode : public cDeclNode
 {
-    protected:
-    string m_name;
-    int m_size; 
-    bool m_isFloat;
-    bool m_isInt;
-    bool m_isChar;
     public:
-    cBaseTypeNode(string name, int size, bool isfloat) : cDeclNode()
-    {
-        m_name = name;
-        m_size = size;
-        m_isFloat = isfloat;
-        m_isChar = false;
-        m_isInt = false;
-        if (!m_isFloat) {
-            if(name == "char")
-            {
-                m_isChar = true;
-            }
-            else
-            {
-                m_isInt = true;
-            }
-            
+        cBaseTypeNode(string name, int size, bool isFloat) 
+            : cDeclNode() 
+        {
+            m_name = name;
+            m_size = size;
+            m_isFloat = isFloat;
         }
-        
-    }
-    bool isFloat(){return m_isFloat;}
-    bool isInt(){return m_isInt;}
-    bool isChar(){return m_isChar;}
 
-        virtual string NodeType() { return string("base_decl"); }
+        // return various Is* values
+        virtual bool IsFloat() { return m_isFloat; }
+        virtual bool IsInt()   { return !m_isFloat; }
+        virtual bool IsChar()  { return (!m_isFloat && m_size==1); }
+        virtual bool IsType()  { return true; }
+
+        // return the symbol for the type
+        virtual cDeclNode *GetType() { return this; }
+
+        // return the name of the item that is declared
+        virtual string  GetName() { return m_name; }
+
+        virtual string NodeType() { return "type"; }
+        // return a string representation of the node
+        virtual string AttributeToString()
+        {
+            return " name=\"" + m_name + "\" size=\"" + 
+                std::to_string(m_size) +
+                "\" isFloat=\"" + std::to_string(m_isFloat);
+        }
+
+        // return size of data item
+        virtual int Sizeof() { return m_size; }
+
         virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+    protected:
+        string m_name;
+        int    m_size;
+        bool   m_isFloat;
 };
