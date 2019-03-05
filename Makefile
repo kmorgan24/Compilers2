@@ -9,7 +9,7 @@
 ## Date: Nov. 28, 2015
 ##
 
-COPTS=-Wall -g -c  -O0 -std=c++11
+COPTS=-Wall -g -c -w  -O0 -std=c++11
 OBJS=main.o \
 	 langlex.o \
 	 langparse.o \
