@@ -83,22 +83,11 @@ class cStructDeclNode : public cDeclNode
     // return a string representation of the struct
     virtual string NodeType() { return string("struct_decl"); }
     virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-    void SetSize(int s)
-    {
-        m_sizeStructDecl = s;
-    }
-    void SetOffset(int o)
-    {
-        m_offsetStruct = o;
-    }
+
     virtual string AttributesToString()
     {
-        return " size=\"" + std::to_string(m_sizeStructDecl) + "\"" + " offset=\"" + std::to_string(m_offsetStruct) + "\"";
+        return " size=\"" + std::to_string(m_size) + "\"" + " offset=\"" + std::to_string(m_offset) + "\"";
     }
-
-  private:
-    int m_sizeStructDecl;
-    int m_offsetStruct;
 
   protected:
     cSymbolTable::symbolTable_t *m_symTbl; // symbol table for decls
