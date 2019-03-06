@@ -19,13 +19,12 @@
 
 class cVarDeclNode : public cDeclNode
 {
-    int m_offset;
 
   public:
     // params are the symbol for the type and the name
     cVarDeclNode(cSymbol *type_id, cSymbol *var_id) : cDeclNode()
     {
-        m_offset = 0;
+
         AddChild(type_id);
 
         // Check to see if the symbol is not in the inner most scope.
@@ -76,7 +75,7 @@ class cVarDeclNode : public cDeclNode
     }
 
     // Return the size of the var
-    virtual int Sizeof() { return GetType()->Sizeof(); }
+    virtual int Sizeof() { return m_size; }
 
     // return a string representation of the node
     virtual string NodeType() { return string("var_decl"); }
@@ -85,8 +84,4 @@ class cVarDeclNode : public cDeclNode
         return " size=\"" + std::to_string(Sizeof()) + "\" offset=\"" + std::to_string(m_offset) + "\"";
     }
     virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
-    void SetOffset(int offset)
-    {
-        m_offset = offset;
-    }
 };

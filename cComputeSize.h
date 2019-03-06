@@ -115,7 +115,8 @@ class cComputeSize : public cVisitor
 
     virtual void Visit(cVarDeclNode *node)
     {
-        int itemsize = node->Sizeof();
+        int itemsize = node->GetBaseType()->Sizeof();
+        node->SetSize(itemsize);
         while (m_offset % 4 != 0 && itemsize != 1)
         {
             ++m_offset;

@@ -35,7 +35,7 @@ class cDeclNode : public cAstNode
     virtual bool IsFloat() { return false; }
     virtual bool IsInt() { return false; }
     virtual bool IsChar() { return false; }
-    virtual int Sizeof() { return 0; }
+    virtual int Sizeof() { return m_size; }
     virtual string NodeType() { return string("decl"); }
     bool IsCompatibleWith(cDeclNode *decl)
     {
@@ -54,4 +54,9 @@ class cDeclNode : public cAstNode
         return false;
     }
     virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+    virtual int GetOffset() { return m_offset; }
+    virtual void SetSize(int size) { m_size = size; }
+    virtual void SetOffset(int offset) { m_offset = offset; }
+    int m_size;
+    int m_offset;
 };
