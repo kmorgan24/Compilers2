@@ -80,11 +80,17 @@ class cComputeSize : public cVisitor
             if (expr != nullptr)
             {
                 expr->Visit(this);
-                paramSize += expr->GetType()->Sizeof();
+                int pSize = expr->GetType()->Sizeof();
+                while (pSize % 4 != 0)
+                {
+                    pSize++;
+                }
+                paramSize += pSize;
             }
         }
-
+        m_offset += paramSize;
         node->SetSize(paramSize);
+        node->SetOffset(m_offset);
     }
 
     virtual void Visit(cParamsNode *node)
@@ -121,6 +127,7 @@ class cComputeSize : public cVisitor
         {
             ++m_offset;
         }
+
         node->SetOffset(m_offset);
 
         m_offset += itemsize;

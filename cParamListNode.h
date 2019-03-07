@@ -43,7 +43,12 @@ class cParamListNode : public cAstNode
     {
         m_sizeparamList = s;
     }
+    void SetOffset(int o)
+    {
+        m_offsetParamList = o;
+    }
 
   private:
     int m_sizeparamList;
+    int m_offsetParamList;
 };
