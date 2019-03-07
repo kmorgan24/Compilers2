@@ -6,7 +6,7 @@
 //
 // Inherits from cExprNode so variable refs can be used in expressions`
 //
-// Author: Phil Howard 
+// Author: Phil Howard
 // phil.howard@oit.edu
 //
 // Date: Nov. 29, 2015
@@ -21,149 +21,157 @@
 
 class cVarExprNode : public cExprNode
 {
-    public:
-        // param is the symbol for the variable
-        cVarExprNode(cSymbol *name)
-            : cExprNode()
+  public:
+    // param is the symbol for the variable
+    cVarExprNode(cSymbol *name)
+        : cExprNode()
+    {
+        cSymbol *sym = g_SymbolTable.Find(name->GetName());
+        if (sym == nullptr)
         {
-            cSymbol *sym = g_SymbolTable.Find(name->GetName());
-            if (sym == nullptr)
-            {
-                string error("");
-                error += "Symbol " + name->GetName() + " not defined";
-                SemanticError(error);
-            }
-
-            AddChild(name);
+            string error("");
+            error += "Symbol " + name->GetName() + " not defined";
+            SemanticError(error);
         }
 
-        // called for the fields in struct refs
-        void AddElement(cSymbol *name)
+        AddChild(name);
+    }
+
+    // called for the fields in struct refs
+    void AddElement(cSymbol *name)
+    {
+        cDeclNode *type = GetType();
+
+        if (type->IsStruct())
         {
-            cDeclNode *type = GetType();
+            cStructDeclNode *decl;
+            decl = dynamic_cast<cStructDeclNode *>(type);
+            assert(decl != nullptr);
 
-            if (type->IsStruct())
+            cSymbol *field = decl->GetField(name->GetName());
+            if (field != nullptr)
             {
-                cStructDeclNode *decl;
-                decl = dynamic_cast<cStructDeclNode *>(type);
-                assert(decl != nullptr);
-
-                cSymbol* field = decl->GetField(name->GetName());
-                if (field != nullptr)
-                {
-                    AddChild(field);
-                }
-                else
-                {
-                    SemanticError( name->GetName() + " is not a field of " +
-                            GetName());
-                }
+                AddChild(field);
             }
             else
             {
-                SemanticError( GetName() + " is not a struct" );
+                SemanticError(name->GetName() + " is not a field of " +
+                              GetName());
             }
         }
-
-        void AddElement(cExprNode *index)
+        else
         {
-            if (!index->GetType()->IsInt())
-            {
-                SemanticError( "Index of " + GetName() + " is not an int");
-                return ;
-            }
+            SemanticError(GetName() + " is not a struct");
+        }
+    }
 
-            cDeclNode *type = GetType();
-            if (!type->IsArray())
-                SemanticError( GetName() + " is not an array" );
-            else
-                AddChild(index);
+    void AddElement(cExprNode *index)
+    {
+        if (!index->GetType()->IsInt())
+        {
+            SemanticError("Index of " + GetName() + " is not an int");
+            return;
         }
 
-        // return a string representation of the name of the var
-        virtual string GetName()
+        cDeclNode *type = GetType();
+        if (!type->IsArray())
+            SemanticError(GetName() + " is not an array");
+        else
+            AddChild(index);
+    }
+
+    // return a string representation of the name of the var
+    virtual string GetName()
+    {
+        string name("");
+        cSymbol *sym;
+        cIntExprNode *intVal;
+
+        int index = 0;
+
+        sym = dynamic_cast<cSymbol *>(GetChild(index));
+
+        name += sym->GetName();
+
+        for (index = 1; index < NumChildren(); index++)
         {
-            string name("");
-            cSymbol* sym;
-            cIntExprNode* intVal;
-
-            int index = 0;
-
-            sym = dynamic_cast<cSymbol*>(GetChild(index));
-
-            name += sym->GetName();
-
-            for (index=1; index<NumChildren(); index++)
+            // using the result of a dynamic cast to determine the
+            // type of the things is a kludge.
+            intVal = dynamic_cast<cIntExprNode *>(GetChild(index));
+            if (intVal != nullptr)
             {
-                // using the result of a dynamic cast to determine the
-                // type of the things is a kludge.
-                intVal = dynamic_cast<cIntExprNode*>(GetChild(index));
-                if (intVal != nullptr)
-                {
-                    name += "[]";
-                }
-                else
-                {
-                    sym = dynamic_cast<cSymbol*>(GetChild(index));
-                    name += "." + sym->GetName();
-                }
-            }
-
-            return name;
-        }
-            
-        // Return the type of the var
-        // This is complicated by the fact the this may be an array or struct
-        virtual cDeclNode* GetType()
-        {
-            int index_depth = 0;
-            cSymbol* sym;
-            int index = NumChildren()-1;
-
-            // search for the last non-index
-            cAstNode *node = GetChild(index);
-            sym = dynamic_cast<cSymbol*>(node);
-            while (sym == nullptr)
-            {
-                index_depth++;
-                index--;
-                node = GetChild(index);
-                sym = dynamic_cast<cSymbol*>(node);
-            }
-
-            if (sym->GetDecl()->GetType()->IsArray() && index_depth > 0)
-            {
-                cArrayDeclNode *arr = dynamic_cast<cArrayDeclNode*>
-                    (sym->GetDecl()->GetType());
-                return arr->GetType(index_depth);
+                name += "[]";
             }
             else
             {
-                return sym->GetDecl()->GetType();
+                sym = dynamic_cast<cSymbol *>(GetChild(index));
+                name += "." + sym->GetName();
             }
         }
 
-        // Return the declaration of the var
-        virtual cDeclNode* GetDecl()
+        return name;
+    }
+
+    // Return the type of the var
+    // This is complicated by the fact the this may be an array or struct
+    virtual cDeclNode *GetType()
+    {
+        int index_depth = 0;
+        cSymbol *sym;
+        int index = NumChildren() - 1;
+
+        // search for the last non-index
+        cAstNode *node = GetChild(index);
+        sym = dynamic_cast<cSymbol *>(node);
+        while (sym == nullptr)
         {
-            int index_depth = 0;
-            cSymbol* sym;
-            cAstNode *node;
-            int index = NumChildren()-1;
+            index_depth++;
+            index--;
             node = GetChild(index);
-            sym = dynamic_cast<cSymbol*>(node);
-            while (sym == nullptr)
-            {
-                index_depth++;
-                index--;
-                node = GetChild(index);
-                sym = dynamic_cast<cSymbol*>(node);
-            }
-
-            return sym->GetDecl();
+            sym = dynamic_cast<cSymbol *>(node);
         }
 
-        // return a string representation of the node
-        virtual string NodeType() { return string("varref"); }
-        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        if (sym->GetDecl()->GetType()->IsArray() && index_depth > 0)
+        {
+            cArrayDeclNode *arr = dynamic_cast<cArrayDeclNode *>(sym->GetDecl()->GetType());
+            return arr->GetType(index_depth);
+        }
+        else
+        {
+            return sym->GetDecl()->GetType();
+        }
+    }
+
+    // Return the declaration of the var
+    virtual cDeclNode *GetDecl()
+    {
+        int index_depth = 0;
+        cSymbol *sym;
+        cAstNode *node;
+        int index = NumChildren() - 1;
+        node = GetChild(index);
+        sym = dynamic_cast<cSymbol *>(node);
+        while (sym == nullptr)
+        {
+            index_depth++;
+            index--;
+            node = GetChild(index);
+            sym = dynamic_cast<cSymbol *>(node);
+        }
+
+        return sym->GetDecl();
+    }
+
+    // return a string representation of the node
+    virtual string NodeType() { return string("varref"); }
+    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+    virtual string AttributesToString() { return " size=\"" + std::to_string(m_size) + "\"" + " offset=\"" + std::to_string(m_offset) + "\""; }
+    void SetSize(int size) { m_size = size; }
+    void SetOffset(int offset) { m_offset = offset; }
+    int GetSize();
+    int GetOffset();
+
+  private:
+    int m_size;
+    int m_offset;
 };

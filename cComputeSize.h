@@ -135,7 +135,18 @@ class cComputeSize : public cVisitor
     }
     virtual void Visit(cVarExprNode *node)
     {
+        int size = node->GetDecl()->Sizeof();
+        int off = node->GetDecl()->GetOffset();
+        node->SetSize(size);
+        Align();
+        node->SetOffset(off);
+    }
+
+    void Visit(cStmtsNode *node)
+    {
+        int startoff = m_offset;
         VisitAllChildren(node);
+        m_offset = startoff;
     }
     virtual void VisitAllNodes(cAstNode *node)
     {
@@ -148,7 +159,7 @@ class cComputeSize : public cVisitor
     // void Visit(cPrintNode *node) { VisitAllChildren(node); }
     // void Visit(cReturnNode *node) { VisitAllChildren(node); }
     // void Visit(cStmtNode *node) { VisitAllChildren(node); }
-    // void Visit(cStmtsNode *node) { VisitAllChildren(node); }
+
     // void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
     // void Visit(cIfNode *node) { VisitAllChildren(node); }
     // void Visit(cIntExprNode *node) { VisitAllChildren(node); }
