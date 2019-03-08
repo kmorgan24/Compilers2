@@ -55,17 +55,70 @@ class cComputeSize : public cVisitor
     {
         int startOff = m_offset;
         int startH = m_highWater;
+        VisitAllChildren(node);
         m_offset = 0;
         m_highWater = 0;
-        VisitAllChildren(node);
-        Align();
+
+        //Align();
         if (m_offset > m_highWater)
         {
             m_highWater = m_offset;
         }
 
+        //node->SetSize(m_highWater);
+
+        //manual visit
+        //get rvalue size
+        int sizerval = node->GetType()->Sizeof();
+        //get params size
+        int sizeparams = 0;
+        cDeclsNode *params = node->GetParams();
+        if (params != nullptr)
+        {
+            for (int i = 0; i < params->NumDecls(); i++)
+            {
+                int off = sizeparams;
+                sizeparams += params->GetDecl(i)->Sizeof();
+                while (sizeparams % 4 != 0)
+                {
+                    ++sizeparams;
+                }
+
+                params->GetDecl(i)->SetOffset(off);
+            }
+            params->SetSize(sizeparams);
+        }
+
+        //get decls size
+        cDeclsNode *funcdecls = node->GetLocals();
+        m_offset = sizeparams;
+        int sizelocals = 0;
+        for (int i = 0; i < funcdecls->NumDecls(); i++)
+        {
+            sizelocals += funcdecls->GetDecl(i)->Sizeof();
+            int resize = m_offset;
+            Align();
+            resize = m_offset - resize;
+            sizelocals += resize;
+            funcdecls->GetDecl(i)->SetOffset(m_offset);
+        }
+        sizeparams += sizelocals;
+        while (sizeparams % 4 != 0)
+        {
+            ++sizeparams;
+        }
+        if (sizeparams > m_highWater)
+        {
+            m_highWater = sizeparams;
+        }
+
         node->SetSize(m_highWater);
         node->SetOffset(startOff - 8);
+        if (startOff - 8 < 0)
+        {
+            node->SetOffset(0);
+        }
+
         m_offset = startOff;
         m_highWater = startH;
     }

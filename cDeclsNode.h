@@ -42,11 +42,22 @@ class cDeclsNode : public cAstNode
     {
         m_sizeDecl = s;
     }
+    void SetOffset(int o)
+    {
+        m_offsetDecl = o;
+    }
     virtual string AttributesToString()
     {
-        return " size=\"" + std::to_string(m_sizeDecl) + "\"";
+        string rval = "";
+        if (m_sizeDecl != 0)
+        {
+            rval = " size=\"" + std::to_string(m_sizeDecl) + "\"";
+        }
+
+        return rval;
     }
 
   private:
     int m_sizeDecl;
+    int m_offsetDecl;
 };
