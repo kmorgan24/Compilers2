@@ -95,12 +95,16 @@ class cComputeSize : public cVisitor
         int sizelocals = 0;
         for (int i = 0; i < funcdecls->NumDecls(); i++)
         {
-            sizelocals += funcdecls->GetDecl(i)->Sizeof();
-            int resize = m_offset;
-            Align();
-            resize = m_offset - resize;
-            sizelocals += resize;
+            int size = funcdecls->GetDecl(i)->Sizeof();
+            sizelocals += size;
+
             funcdecls->GetDecl(i)->SetOffset(m_offset);
+            m_offset += size;
+            Align();
+            if (m_offset > m_highWater)
+            {
+                m_highWater = m_offset;
+            }
         }
         sizeparams += sizelocals;
         while (sizeparams % 4 != 0)
@@ -167,7 +171,7 @@ class cComputeSize : public cVisitor
         // }
 
         node->SetSize(m_highWater);
-        node->SetOffset(startOff - 8);
+        node->SetOffset(0);
         m_offset = startOff;
         m_highWater = startH;
     }
