@@ -1,5 +1,5 @@
 #!/bin/bash
-./lang test/$1.lang langout
+./lang test/$1.lang lang
 RETVAL=$?
 if [ $RETVAL -ne 0 ]
 then
@@ -10,7 +10,7 @@ then
   [ $RETVAL -ne 0 ] && echo $1 FAILED ----- && exit
 fi
 
-stackl langout > out
+stackl langout.sl > out
 
 diff -qbwB out test/$1.correct
 RETVAL=$?
