@@ -1,0 +1,20 @@
+//Kyronn Morgan
+//Test5
+//Tests 
+program
+{
+    int func1(int a);
+    int func2(int a)
+    {
+        print(a);
+        return a;
+    }
+    int func3(int a, int b)
+    {
+        print(a);
+        print(b);
+        return a + b;
+    }
+    print(func2(1));
+    print(func3(2, 3));
+}

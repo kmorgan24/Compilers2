@@ -1,0 +1,8 @@
+//Kyronn Morgan
+//Test1
+//Tests printing constants
+program
+{
+    print(1000);
+    print(1);
+}

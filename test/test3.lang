@@ -1,0 +1,20 @@
+//Kyronn Morgan
+//Test3
+//Tests scopes
+program
+{
+    int a;
+    int b;
+    a = 1;
+    b = 2;
+    {
+        int a;
+        int b;
+        a = 3;
+        b = 4;
+        print(a);
+        print(b);
+    }
+    print(a);
+    print(b);
+}

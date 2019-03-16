@@ -1,0 +1,15 @@
+//Kyronn Morgan
+//Test4
+//Tests struct decl
+program
+{
+    struct
+    {
+        int a;
+        int b;
+        a = 1
+        b = 1+2*2
+    } S1
+    print(S1.a);
+    print(S1.b);
+}

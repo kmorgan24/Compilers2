@@ -1,0 +1,14 @@
+//Kyronn Morgan
+//Test2
+//Tests variable decleration
+program
+{
+int a;
+char b;
+
+a = 1000;
+b = 2;
+
+print(a);
+print(b);
+}
