@@ -4,6 +4,8 @@
 class cCodeGen : public cVisitor
 {
   private:
+    int m_firstRun = 0;
+
   public:
     cCodeGen(std::string filename)
     {
@@ -27,11 +29,15 @@ class cCodeGen : public cVisitor
         VisitAllChildren(node);
     }
 
-    void Visit(cProgramNode *node) { EmitString("main:\n"); }
+    void Visit(cProgramNode *node)
+    {
+        EmitString("main:\n");
+    }
     void Visit(cIntExprNode *node)
     {
         EmitString("PUSH ");
         EmitInt(node->GetValue());
+        EmitString("\n");
     }
 
     void Visit(cPrintNode *node)
@@ -41,11 +47,20 @@ class cCodeGen : public cVisitor
         EmitString("POP\n");
         EmitString("POP\n");
     }
+    void Visit(cBlockNode *node)
+    {
+        if (m_firstRun == 0)
+        {
+            m_firstRun++;
+            EmitString("main:\n");
+        }
 
+        VisitAllChildren(node);
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
     // void Visit(cAssignNode *node) { VisitAllChildren(node); }
     // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
-    // void Visit(cBlockNode *node) { VisitAllChildren(node); }
+
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }
     // void Visit(cDeclsNode *node) { VisitAllChildren(node); }
     // void Visit(cExprNode *node) { VisitAllChildren(node); }
