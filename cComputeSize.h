@@ -2,6 +2,7 @@
 
 #include "cVisitor.h"
 #include "astnodes.h"
+#define WORD_SIZE 8
 class cComputeSize : public cVisitor
 {
     int m_offset;
@@ -152,10 +153,33 @@ class cComputeSize : public cVisitor
 
     virtual void Visit(cParamsNode *node)
     {
-        VisitAllChildren(node);
-        Align();
+        // Init the offset based on function call stack overhead
+        m_offset = -12;
 
-        node->SetSize(m_offset);
+        // Need to loop through params because computation runs
+        // opposite of other vars
+        for (int ii = 0; ii < node->NumDecls(); ii++)
+        {
+            cDeclNode *param = node->GetDecl(ii);
+            param->SetSize(param->GetType()->Sizeof());
+            param->SetOffset(m_offset);
+
+            m_offset -= param->Sizeof();
+            m_offset = RoundDown(m_offset);
+        }
+
+        // Compute size based on call stack overhead
+        node->SetSize(-12 - m_offset);
+
+        // reset m_offset for funciton locals
+        m_offset = 0;
+    }
+
+    int RoundDown(int value)
+    {
+        if (value % WORD_SIZE == 0)
+            return value;
+        return value - (WORD_SIZE + value % WORD_SIZE);
     }
 
     virtual void Visit(cStructDeclNode *node)
@@ -165,10 +189,6 @@ class cComputeSize : public cVisitor
         m_offset = 0;
         m_highWater = 0;
         VisitAllChildren(node);
-        // while (m_offset % 4 != 0)
-        // {
-        //     ++m_offset;
-        // }
 
         node->SetSize(m_highWater);
         node->SetOffset(0);
@@ -204,6 +224,7 @@ class cComputeSize : public cVisitor
         node->SetSize(size);
         Align();
         node->SetOffset(off);
+        //m_offset += off;
     }
 
     void Visit(cStmtsNode *node)
