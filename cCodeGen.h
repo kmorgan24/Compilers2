@@ -1,11 +1,17 @@
 #pragma once
+#include "emit.h"
 
 class cCodeGen : public cVisitor
 {
   private:
   public:
-    cCodeGen(string fileName)
+    cCodeGen(std::string filename)
     {
+        InitOutput(filename.c_str());
+    }
+    ~cCodeGen()
+    {
+        FinalizeOutput();
     }
     virtual void VisitAllChildren(cAstNode *node)
     {
@@ -21,30 +27,44 @@ class cCodeGen : public cVisitor
         VisitAllChildren(node);
     }
 
-    void Visit(cAstNode *node) { VisitAllChildren(node); }
-    void Visit(cAssignNode *node) { VisitAllChildren(node); }
-    void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
-    void Visit(cBlockNode *node) { VisitAllChildren(node); }
-    void Visit(cDeclNode *node) { VisitAllChildren(node); }
-    void Visit(cDeclsNode *node) { VisitAllChildren(node); }
-    void Visit(cExprNode *node) { VisitAllChildren(node); }
-    void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
-    void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
-    void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
-    void Visit(cIfNode *node) { VisitAllChildren(node); }
-    void Visit(cIntExprNode *node) { VisitAllChildren(node); }
-    void Visit(cOpNode *node) { VisitAllChildren(node); }
-    void Visit(cParamListNode *node) { VisitAllChildren(node); }
-    void Visit(cParamsNode *node) { VisitAllChildren(node); }
-    void Visit(cPrintNode *node) { VisitAllChildren(node); }
-    void Visit(cReturnNode *node) { VisitAllChildren(node); }
-    void Visit(cStmtNode *node) { VisitAllChildren(node); }
-    void Visit(cStmtsNode *node) { VisitAllChildren(node); }
-    void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
-    void Visit(cSymbol *node) { VisitAllChildren(node); }
-    void Visit(cVarDeclNode *node) { VisitAllChildren(node); }
-    void Visit(cVarExprNode *node) { VisitAllChildren(node); }
-    void Visit(cWhileNode *node) { VisitAllChildren(node); }
-    void Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
-    void Visit(cProgramNode *node) { VisitAllChildren(node); }
+    void Visit(cProgramNode *node) { EmitString("main:\n"); }
+    void Visit(cIntExprNode *node)
+    {
+        EmitString("PUSH ");
+        EmitInt(node->GetValue());
+    }
+
+    void Visit(cPrintNode *node)
+    {
+        node->GetExpr()->Visit(this);
+        EmitString("CALL @print\n");
+        EmitString("POP\n");
+        EmitString("POP\n");
+    }
+
+    // void Visit(cAstNode *node) { VisitAllChildren(node); }
+    // void Visit(cAssignNode *node) { VisitAllChildren(node); }
+    // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cBlockNode *node) { VisitAllChildren(node); }
+    // void Visit(cDeclNode *node) { VisitAllChildren(node); }
+    // void Visit(cDeclsNode *node) { VisitAllChildren(node); }
+    // void Visit(cExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
+    // void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cIfNode *node) { VisitAllChildren(node); }
+
+    // void Visit(cOpNode *node) { VisitAllChildren(node); }
+    // void Visit(cParamListNode *node) { VisitAllChildren(node); }
+    // void Visit(cParamsNode *node) { VisitAllChildren(node); }
+
+    // void Visit(cReturnNode *node) { VisitAllChildren(node); }
+    // void Visit(cStmtNode *node) { VisitAllChildren(node); }
+    // void Visit(cStmtsNode *node) { VisitAllChildren(node); }
+    // void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
+    // void Visit(cSymbol *node) { VisitAllChildren(node); }
+    // void Visit(cVarDeclNode *node) { VisitAllChildren(node); }
+    // void Visit(cVarExprNode *node) { VisitAllChildren(node); }
+    // void Visit(cWhileNode *node) { VisitAllChildren(node); }
+    // void Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
 };
