@@ -7,9 +7,9 @@ program
     {
         int a;
         int b;
-        a = 1
-        b = 1+2*2
     } S1
+    S1.a = 1;
+    S2.b = 1+2*2;
     print(S1.a);
     print(S1.b);
 }
