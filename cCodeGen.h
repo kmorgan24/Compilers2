@@ -31,7 +31,7 @@ class cCodeGen : public cVisitor
 
     void Visit(cProgramNode *node)
     {
-        EmitString("main:\n");
+        //EmitString("main:\n");
     }
     void Visit(cIntExprNode *node)
     {
@@ -57,6 +57,13 @@ class cCodeGen : public cVisitor
 
         VisitAllChildren(node);
     }
+    void Visit(cVarExprNode *node)
+    {
+        EmitString("PUSHCVAR ");
+        EmitInt(node->GetOffset());
+        EmitString("\n");
+        VisitAllChildren(node);
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
     // void Visit(cAssignNode *node) { VisitAllChildren(node); }
     // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
@@ -79,7 +86,7 @@ class cCodeGen : public cVisitor
     // void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
     // void Visit(cSymbol *node) { VisitAllChildren(node); }
     // void Visit(cVarDeclNode *node) { VisitAllChildren(node); }
-    // void Visit(cVarExprNode *node) { VisitAllChildren(node); }
+
     // void Visit(cWhileNode *node) { VisitAllChildren(node); }
     // void Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
 };
