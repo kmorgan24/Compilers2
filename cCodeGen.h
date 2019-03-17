@@ -96,6 +96,15 @@ class cCodeGen : public cVisitor
     {
         VisitAllChildren(node);
     }
+    void Visit(cFuncExprNode *node)
+    {
+        EmitString(node->GetSymbol()->GetName() + ":\n");
+        VisitAllChildren(node);
+    }
+    void Visit(cParamListNode *node)
+    {
+        VisitAllChildren(node);
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
 
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }
@@ -103,11 +112,10 @@ class cCodeGen : public cVisitor
     // void Visit(cExprNode *node) { VisitAllChildren(node); }
     // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
     // void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
-    // void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
+
     // void Visit(cIfNode *node) { VisitAllChildren(node); }
 
     //
-    // void Visit(cParamListNode *node) { VisitAllChildren(node); }
     // void Visit(cParamsNode *node) { VisitAllChildren(node); }
 
     // void Visit(cReturnNode *node) { VisitAllChildren(node); }
