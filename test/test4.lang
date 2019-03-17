@@ -7,9 +7,10 @@ program
     {
         int a;
         int b;
-    } S1
-    S1.a = 1;
-    S2.b = 1+2*2;
-    print(S1.a);
-    print(S1.b);
+    } S1;
+    S1 test;
+    test.a = 1;
+    test.b = 1+2*2;
+    print(test.a);
+    print(test.b);
 }
