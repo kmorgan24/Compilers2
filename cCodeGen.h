@@ -71,9 +71,32 @@ class cCodeGen : public cVisitor
         EmitInt(node->GetLval()->GetOffset());
         EmitString("\n");
     }
+    void Visit(cBinaryExprNode *node)
+    {
+        VisitAllChildren(node);
+        string temp = node->GetOperator()->GetOpAsString();
+        if (temp.compare("+") == 0)
+        {
+            EmitString("PLUS\n");
+        }
+        else if (temp.compare("-") == 0)
+        {
+            EmitString("MINUS\n");
+        }
+        else if (temp.compare("*") == 0)
+        {
+            EmitString("TIMES\n");
+        }
+        else if (temp.compare("/") == 0)
+        {
+            EmitString("DIVIDE\n");
+        }
+    }
+    void Visit(cOpNode *node)
+    {
+        VisitAllChildren(node);
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
-
-    // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
 
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }
     // void Visit(cDeclsNode *node) { VisitAllChildren(node); }
@@ -83,7 +106,7 @@ class cCodeGen : public cVisitor
     // void Visit(cFuncExprNode *node) { VisitAllChildren(node); }
     // void Visit(cIfNode *node) { VisitAllChildren(node); }
 
-    // void Visit(cOpNode *node) { VisitAllChildren(node); }
+    //
     // void Visit(cParamListNode *node) { VisitAllChildren(node); }
     // void Visit(cParamsNode *node) { VisitAllChildren(node); }
 
