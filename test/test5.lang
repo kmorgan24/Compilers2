@@ -3,18 +3,23 @@
 //Tests 
 program
 {
-    int func1(int a);
-    int func2(int a)
+    int func1(char a);
+    int func2(char a)
     {
         print(a);
         return a;
     }
-    int func3(int a, int b)
+    int func3(char a, char b)
     {
         print(a);
         print(b);
         return a + b;
     }
-    print(func2(1));
-    print(func3(2, 3));
+    int rval1;
+    int rval2;
+  
+    rval1 = func2(1);
+    rval2 = func3(2, 3);
+    print(rval1);
+    print(rval2);
 }
