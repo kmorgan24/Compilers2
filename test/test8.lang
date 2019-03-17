@@ -1,0 +1,36 @@
+//Kyronn Morgan
+//Test6
+//Tests while
+program
+{
+    int a;
+    int b;
+    int c;
+    a = 1;
+    b = 2;
+    
+    while(a == 1 || b == 1)    //prints 2 once
+        print(a = a + 1);       
+    a = 1;
+    while(a == 2 || b == 2)    //prints 3 once
+        print(b = b + 1);
+    b = 2;
+    while(a == 2 || b == 1)    // both wrong prints nothing
+        print(a);
+    
+    while(a == 1 && b == 2)    // both true, prints 3 one time
+        print(b = b + 1);
+    
+    while(a == 2 && b == 2)    // first wrong prints nothing
+        print(6);
+    
+    while(a == 1 && b == 1)    //second wrong prints nothing
+        print(7);
+    
+    while(a == 2 && b == 1)    // both wrong prints nothing
+        print(8);
+    
+    while(a != 5)
+        print(a = a + 1);       // prints 2, 3, 4, 5
+    print(9);
+}

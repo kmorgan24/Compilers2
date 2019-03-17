@@ -1,0 +1,37 @@
+//Kyronn Morgan
+//Test6
+//Tests conditionals
+program
+{
+    int a;
+    int b;
+    int c;
+    a = 1;
+    b = 2;
+    
+    if(a == 1 || b == 1)    // a is correct, prints 1
+        print(1);
+    endif;
+    if(a == 2 || b == 2)    // b is correct, prints 2
+        print(2);
+    endif;
+    if(a == 1 || b == 2)    // a and b are correct, prints 3
+        print(3);
+    endif;
+    if(a == 2 || b == 1)    // both wrong prints nothing
+        print(4);
+    endif;
+    if(a == 1 && b == 2)    // both true, prints 5
+        print(5);
+    endif;
+    if(a == 2 && b == 2)    // first wrong prints nothing
+        print(6);
+    endif;
+    if(a == 1 && b == 1)    //second wrong prints nothing
+        print(7);
+    endif;
+    if(a == 2 && b == 1)    // both wrong prints nothing
+        print(8);
+    endif;
+    print(9);
+}
