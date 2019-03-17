@@ -127,9 +127,9 @@ class cCodeGen : public cVisitor
         string endofelse = GenerateLabel();
         node->GetCond()->Visit(this);
         //VisitAllChildren(node);
-        EmitString("JUMPE " + endofif + "\n");
+        EmitString("JUMPE @" + endofif + "\n");
         (node->GetIf()->Visit(this));
-        EmitString("JUMP " + endofelse + "\n");
+        EmitString("JUMP @" + endofelse + "\n");
         EmitString(endofif + ":\n");
         if (node->GetElse() != nullptr)
         {
