@@ -1,5 +1,5 @@
 #!/bin/bash
-./lang test/$1.lang lang
+./lang test/$1.lang langout
 RETVAL=$?
 if [ $RETVAL -ne 0 ]
 then
