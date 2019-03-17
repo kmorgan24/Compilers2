@@ -91,6 +91,22 @@ class cCodeGen : public cVisitor
         {
             EmitString("DIVIDE\n");
         }
+        else if (temp.compare("==") == 0)
+        {
+            EmitString("EQ\n");
+        }
+        else if (temp.compare("!=") == 0)
+        {
+            EmitString("NE\n");
+        }
+        else if (temp.compare("||") == 0)
+        {
+            EmitString("OR\n");
+        }
+        else if (temp.compare("&&") == 0)
+        {
+            EmitString("AND\n");
+        }
     }
     void Visit(cOpNode *node)
     {
@@ -105,6 +121,22 @@ class cCodeGen : public cVisitor
     {
         VisitAllChildren(node);
     }
+    void Visit(cIfNode *node)
+    {
+        string endofif = GenerateLabel();
+        string endofelse = GenerateLabel();
+        node->GetCond()->Visit(this);
+        //VisitAllChildren(node);
+        EmitString("JUMPE " + endofif + "\n");
+        (node->GetIf()->Visit(this));
+        EmitString("JUMP " + endofelse + "\n");
+        EmitString(endofif + ":\n");
+        if (node->GetElse() != nullptr)
+        {
+            node->GetElse()->Visit(this);
+        }
+        EmitString(endofelse + ":\n");
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
 
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }
@@ -113,7 +145,7 @@ class cCodeGen : public cVisitor
     // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
     // void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
 
-    // void Visit(cIfNode *node) { VisitAllChildren(node); }
+    //
 
     //
     // void Visit(cParamsNode *node) { VisitAllChildren(node); }
