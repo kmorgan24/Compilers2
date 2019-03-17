@@ -59,13 +59,20 @@ class cCodeGen : public cVisitor
     }
     void Visit(cVarExprNode *node)
     {
-        EmitString("PUSHCVAR ");
+        VisitAllChildren(node);
+        EmitString("PUSHVAR ");
         EmitInt(node->GetOffset());
         EmitString("\n");
+    }
+    void Visit(cAssignNode *node)
+    {
         VisitAllChildren(node);
+        EmitString("POPVAR ");
+        EmitInt(node->GetLval()->GetOffset());
+        EmitString("\n");
     }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
-    // void Visit(cAssignNode *node) { VisitAllChildren(node); }
+
     // void Visit(cBinaryExprNode *node) { VisitAllChildren(node); }
 
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }

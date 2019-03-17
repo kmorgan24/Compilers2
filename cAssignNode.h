@@ -4,7 +4,7 @@
 //
 // Defines AST node for assignment statments
 //
-// Author: Phil Howard 
+// Author: Phil Howard
 // phil.howard@oit.edu
 //
 // Date: Nov. 28, 2015
@@ -17,28 +17,29 @@
 
 class cAssignNode : public cStmtNode
 {
-    public:
-        // params are the lval and the expression
-        cAssignNode(cVarExprNode *lval, cExprNode *expr)
-            : cStmtNode()
+  public:
+    // params are the lval and the expression
+    cAssignNode(cVarExprNode *lval, cExprNode *expr)
+        : cStmtNode()
+    {
+        AddChild(lval);
+        AddChild(expr);
+
+        if (!lval->GetDecl()->IsVar())
         {
-            AddChild(lval);
-            AddChild(expr);
-
-            if (!lval->GetDecl()->IsVar())
-            {
-                SemanticError(lval->GetDecl()->GetName() +
-                        " is not an lval");
-            }
-            else if (!lval->GetType()->IsCompatibleWith(expr->GetType()))
-            {
-                SemanticError("Cannot assign " +
-                        expr->GetType()->GetName() +
-                        " to " +
-                        lval->GetType()->GetName());
-            }
+            SemanticError(lval->GetDecl()->GetName() +
+                          " is not an lval");
         }
-
-        virtual string NodeType() { return string("assign"); }
-        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+        else if (!lval->GetType()->IsCompatibleWith(expr->GetType()))
+        {
+            SemanticError("Cannot assign " +
+                          expr->GetType()->GetName() +
+                          " to " +
+                          lval->GetType()->GetName());
+        }
+    }
+    cVarExprNode *GetLval() { return dynamic_cast<cVarExprNode *>(GetChild(0)); }
+    cExprNode *GetRval() { return dynamic_cast<cExprNode *>(GetChild(1)); }
+    virtual string NodeType() { return string("assign"); }
+    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };
