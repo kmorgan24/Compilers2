@@ -149,19 +149,8 @@ class cCodeGen : public cVisitor
         EmitString("JUMP @" + startOfWhile + "\n");
         EmitString(endOfWhile + ":\n");
     }
-    // void Visit(cAstNode *node) { VisitAllChildren(node); }
 
-    // void Visit(cDeclNode *node) { VisitAllChildren(node); }
-    // void Visit(cDeclsNode *node) { VisitAllChildren(node); }
     // void Visit(cExprNode *node) { VisitAllChildren(node); }
-    // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
-    // void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
     // void Visit(cParamsNode *node) { VisitAllChildren(node); }
     // void Visit(cReturnNode *node) { VisitAllChildren(node); }
-    // void Visit(cStmtNode *node) { VisitAllChildren(node); }
-    // void Visit(cStmtsNode *node) { VisitAllChildren(node); }
-    // void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
-    // void Visit(cSymbol *node) { VisitAllChildren(node); }
-    // void Visit(cVarDeclNode *node) { VisitAllChildren(node); }
-    // void Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
 };
