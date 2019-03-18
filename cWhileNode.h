@@ -6,7 +6,7 @@
 //
 // Inherits from cStmtNode because this is a statement
 //
-// Author: Phil Howard 
+// Author: Phil Howard
 // phil.howard@oit.edu
 //
 // Date: Nov. 29, 2015
@@ -18,16 +18,23 @@
 
 class cWhileNode : public cStmtNode
 {
-    public:
-        // params are the condition and the statement
-        cWhileNode(cExprNode *cond, cStmtNode *stmt)
-            : cStmtNode()
-        {
-            AddChild(cond);
-            AddChild(stmt);
-        }
-
-        // return a string representation of the node
-        virtual string NodeType() { return string("while"); }
-        virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
+  public:
+    // params are the condition and the statement
+    cWhileNode(cExprNode *cond, cStmtNode *stmt)
+        : cStmtNode()
+    {
+        AddChild(cond);
+        AddChild(stmt);
+    }
+    cExprNode *GetCondition()
+    {
+        return dynamic_cast<cExprNode *>(GetChild(0));
+    }
+    cStmtNode *GetStmt()
+    {
+        return dynamic_cast<cStmtNode *>(GetChild(1));
+    }
+    // return a string representation of the node
+    virtual string NodeType() { return string("while"); }
+    virtual void Visit(cVisitor *visitor) { visitor->Visit(this); }
 };

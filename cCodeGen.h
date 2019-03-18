@@ -137,6 +137,18 @@ class cCodeGen : public cVisitor
         }
         EmitString(endofelse + ":\n");
     }
+    void Visit(cWhileNode *node)
+    {
+        string startOfWhile = GenerateLabel();
+        string endOfWhile = GenerateLabel();
+        EmitString(startOfWhile + ":\n");
+        node->GetCondition()->Visit(this);
+
+        EmitString("JUMPE @" + endOfWhile + "\n");
+        node->GetStmt()->Visit(this);
+        EmitString("JUMP @" + startOfWhile + "\n");
+        EmitString(endOfWhile + ":\n");
+    }
     // void Visit(cAstNode *node) { VisitAllChildren(node); }
 
     // void Visit(cDeclNode *node) { VisitAllChildren(node); }
@@ -144,19 +156,12 @@ class cCodeGen : public cVisitor
     // void Visit(cExprNode *node) { VisitAllChildren(node); }
     // void Visit(cFloatExprNode *node) { VisitAllChildren(node); }
     // void Visit(cFuncDeclNode *node) { VisitAllChildren(node); }
-
-    //
-
-    //
     // void Visit(cParamsNode *node) { VisitAllChildren(node); }
-
     // void Visit(cReturnNode *node) { VisitAllChildren(node); }
     // void Visit(cStmtNode *node) { VisitAllChildren(node); }
     // void Visit(cStmtsNode *node) { VisitAllChildren(node); }
     // void Visit(cStructDeclNode *node) { VisitAllChildren(node); }
     // void Visit(cSymbol *node) { VisitAllChildren(node); }
     // void Visit(cVarDeclNode *node) { VisitAllChildren(node); }
-
-    // void Visit(cWhileNode *node) { VisitAllChildren(node); }
     // void Visit(cBaseTypeNode *node) { VisitAllChildren(node); }
 };
